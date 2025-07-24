@@ -93,37 +93,54 @@
         
         .particle {
             position: absolute;
-            width: 2px;
-            height: 2px;
+            width: 3px;
+            height: 3px;
             background: #00d4ff;
             border-radius: 50%;
-            animation: float 20s infinite linear;
-            opacity: 0.6;
+            animation: roll 15s infinite linear;
+            opacity: 0.7;
         }
         
         .particle:nth-child(odd) {
             background: #0099cc;
-            animation-duration: 25s;
+            animation-duration: 20s;
+            animation-delay: -5s;
         }
         
         .particle:nth-child(3n) {
             background: #0066cc;
-            animation-duration: 30s;
+            animation-duration: 25s;
+            animation-delay: -10s;
         }
         
-        @keyframes float {
+        .particle:nth-child(4n) {
+            background: #00ffff;
+            animation-duration: 18s;
+            animation-delay: -3s;
+        }
+        
+        @keyframes roll {
             0% {
-                transform: translateY(100vh) translateX(0);
+                transform: translateX(-50px) translateY(var(--start-y, 50vh)) rotate(0deg);
                 opacity: 0;
             }
             10% {
-                opacity: 0.8;
+                opacity: 0.9;
+            }
+            25% {
+                transform: translateX(25vw) translateY(calc(var(--start-y, 50vh) - 15vh)) rotate(90deg);
+            }
+            50% {
+                transform: translateX(50vw) translateY(calc(var(--start-y, 50vh) + 15vh)) rotate(180deg);
+            }
+            75% {
+                transform: translateX(75vw) translateY(calc(var(--start-y, 50vh) - 10vh)) rotate(270deg);
             }
             90% {
-                opacity: 0.8;
+                opacity: 0.9;
             }
             100% {
-                transform: translateY(-100px) translateX(100px);
+                transform: translateX(calc(100vw + 50px)) translateY(var(--start-y, 50vh)) rotate(360deg);
                 opacity: 0;
             }
         }
@@ -502,14 +519,20 @@
         // Dynamic particle generation
         function createParticles() {
             const particlesContainer = document.getElementById('particles');
-            const particleCount = 50;
+            const particleCount = 65;
             
             for (let i = 0; i < particleCount; i++) {
                 const particle = document.createElement('div');
                 particle.className = 'particle';
-                particle.style.left = Math.random() * 100 + '%';
-                particle.style.animationDelay = Math.random() * 20 + 's';
-                particle.style.animationDuration = (Math.random() * 10 + 20) + 's';
+                
+                // Create rolling wave effect with staggered timing
+                const baseDelay = (i * 0.3) % 15; // Reduced spacing for more density
+                particle.style.animationDelay = `-${baseDelay}s`;
+                
+                // Vary the vertical starting position for more natural rolling
+                const startY = 25 + (Math.random() * 50); // 25% to 75% of viewport height for more spread
+                particle.style.setProperty('--start-y', `${startY}vh`);
+                
                 particlesContainer.appendChild(particle);
             }
         }
